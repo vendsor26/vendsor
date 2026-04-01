@@ -6,7 +6,7 @@
     <title>Vendsor | The Vending Network</title>
     <style>
         :root {
-            /* User Mode Colors (Default) */
+            /* User Mode Colors */
             --bg-color: #0f172a;
             --grid-color: rgba(56, 189, 248, 0.2);
             --pin-color: #38bdf8;
@@ -14,7 +14,8 @@
             --text-color: #f8fafc;
             --card-bg: rgba(15, 23, 42, 0.85);
             --view-angle: rotateX(60deg) rotateZ(-45deg) scale(0.9);
-            --brand-orange: #ff5722;
+            --brand-accent: #ff5722; /* Orange */
+            --phone-bg: linear-gradient(135deg, #1e293b, #0f172a);
         }
 
         body.owner-mode {
@@ -25,6 +26,8 @@
             --pin-glow: 0 0 15px #10b981;
             --card-bg: rgba(30, 27, 75, 0.85);
             --view-angle: rotateX(55deg) rotateZ(-30deg) scale(0.75); 
+            --brand-accent: #10b981; /* Emerald */
+            --phone-bg: linear-gradient(135deg, #2e1065, #1e1b4b);
         }
 
         body {
@@ -35,251 +38,178 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow-x: hidden;
             transition: background-color 0.8s ease;
+            perspective: 1200px; /* Required for the 3D phone effect */
         }
 
         /* --- Header & Navigation --- */
         header {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            box-sizing: border-box;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; box-sizing: border-box;
             backdrop-filter: blur(10px);
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: white;
-        }
+        .logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; color: white; display: flex; align-items: center; gap: 10px;}
+        .highlight { color: var(--brand-accent); transition: color 0.5s; }
 
-        .highlight { color: var(--brand-orange); }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 500;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
+        .toggle-container { display: flex; align-items: center; gap: 15px; font-weight: 500; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #334155;
-            transition: .4s;
-            border-radius: 34px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border-radius: 50%;
-        }
-
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; border: 1px solid rgba(255,255,255,0.1); }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 3px; background-color: white; transition: .4s cubic-bezier(0.68, -0.55, 0.265, 1.55); border-radius: 50%; }
         input:checked + .slider { background-color: #6366f1; }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* --- Hero Section --- */
-        .hero {
-            padding: 150px 20px 50px 20px;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 56px;
-            margin: 0 0 20px 0;
-            line-height: 1.1;
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: #94a3b8;
-            margin: 0 0 40px 0;
-            line-height: 1.6;
-        }
-
-        .primary-btn {
-            background: var(--brand-orange);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .primary-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
-        }
-
-        .fade-transition { animation: fadeInOut 0.5s ease-in-out; }
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(5px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- 3D Map Section --- */
-        .map-section {
-            position: relative;
-            width: 100%;
-            height: 600px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* --- The Scroll-Linked 3D Phone (Stringtune Effect) --- */
+        #floating-device {
+            position: fixed;
+            top: 50vh;
+            left: 50vw;
+            width: 280px;
+            height: 560px;
+            background: #000;
+            border-radius: 40px;
+            border: 8px solid #334155;
+            box-shadow: -20px 20px 50px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,255,255,0.1);
+            z-index: 50;
+            transform-style: preserve-3d;
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none; /* Let clicks pass through to map */
             overflow: hidden;
+            transform: translate(-50%, -50%) translateZ(0) rotateY(0deg) rotateX(0deg);
         }
 
+        /* The UI inside the phone */
+        .device-screen {
+            width: 100%; height: 100%;
+            background: var(--phone-bg);
+            position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: background 0.8s;
+        }
+
+        /* Phone Screen Content States */
+        .screen-ui { position: absolute; opacity: 0; transition: all 0.5s; text-align: center; width: 80%; }
+        .screen-ui.active { opacity: 1; transform: translateY(0); }
+        .screen-ui:not(.active) { transform: translateY(20px); }
+
+        /* Scroll States for the Phone */
+        /* 1. Hero State */
+        #floating-device.state-hero {
+            left: 80vw;
+            transform: translate(-50%, -50%) rotateY(-15deg) rotateX(5deg) scale(1.1);
+        }
+        /* 2. Map State */
+        #floating-device.state-map {
+            left: 20vw;
+            transform: translate(-50%, -50%) rotateY(25deg) rotateX(15deg) scale(0.9);
+        }
+        /* 3. Features State */
+        #floating-device.state-features {
+            left: 80vw;
+            transform: translate(-50%, -50%) rotateY(-25deg) rotateX(-5deg) scale(1);
+        }
+        /* 4. Steps State */
+        #floating-device.state-steps {
+            left: 50vw;
+            top: 85vh; /* Drop to bottom */
+            transform: translate(-50%, -50%) rotateY(0deg) rotateX(40deg) scale(0.8);
+        }
+
+        /* --- Layout Sections --- */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding: 80px 40px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        /* Hero */
+        .hero { align-items: flex-start; max-width: 60%; margin-left: 5%; }
+        .hero h1 { font-size: 64px; margin: 0 0 20px 0; line-height: 1.1; }
+        .hero p { font-size: 20px; color: #94a3b8; margin: 0 0 40px 0; line-height: 1.6; max-width: 500px; }
+        
+        /* Buttons */
+        .primary-btn {
+            background: var(--brand-accent); color: white; border: none; padding: 15px 35px;
+            font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.3s ease;
+        }
+        .primary-btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        /* 3D Map (Upgraded) */
+        .map-section { align-items: flex-end; padding-right: 10%; }
+        .map-wrapper { width: 60%; display: flex; justify-content: flex-end; }
+        
         .map-grid {
-            width: 800px;
-            height: 800px;
-            background-image: 
-                linear-gradient(var(--grid-color) 2px, transparent 2px),
-                linear-gradient(90deg, var(--grid-color) 2px, transparent 2px);
+            width: 700px; height: 700px;
+            background-image: linear-gradient(var(--grid-color) 2px, transparent 2px), linear-gradient(90deg, var(--grid-color) 2px, transparent 2px);
             background-size: 50px 50px;
             transform: var(--view-angle);
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1), background-image 0.8s ease;
-            position: relative;
-            border: 1px solid var(--grid-color);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5) inset;
+            position: relative; border: 1px solid var(--grid-color);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8) inset; border-radius: 12px; overflow: hidden;
         }
+
+        .map-grid::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, transparent 270deg, rgba(255,255,255,0.1) 360deg);
+            border-radius: 50%; transform: translate(-50%, -50%); animation: radarSweep 4s linear infinite; pointer-events: none;
+        }
+        @keyframes radarSweep { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
         .pin {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: var(--pin-color);
-            border-radius: 50%;
-            box-shadow: var(--pin-glow);
-            transform: translate(-50%, -50%) rotateX(-90deg); 
-            transition: all 0.5s ease;
-            cursor: pointer;
+            position: absolute; width: 16px; height: 16px; background-color: var(--pin-color);
+            border-radius: 50%; box-shadow: 0 0 20px 5px var(--pin-color);
+            transform: translate(-50%, -50%) rotateX(-90deg); transition: all 0.5s ease; cursor: pointer; z-index: 10;
+        }
+        .pin::before {
+            content: ''; position: absolute; bottom: 50%; left: 50%; width: 3px; height: 50px;
+            background: linear-gradient(to top, var(--pin-color), transparent); transform: translateX(-50%); pointer-events: none;
         }
 
-        #pin1 { top: 30%; left: 40%; }
-        #pin2 { top: 70%; left: 60%; }
-        #pin3 { top: 50%; left: 20%; }
+        #pin1 { top: 30%; left: 40%; } #pin2 { top: 70%; left: 60%; } #pin3 { top: 50%; left: 20%; }
+        body.owner-mode #pin2 { background-color: #ef4444; box-shadow: 0 0 20px 5px #ef4444; animation: pulse 1.5s infinite; }
+        body.owner-mode #pin2::before { background: linear-gradient(to top, #ef4444, transparent); }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; transform: translate(-50%, -50%) rotateX(-90deg) scale(1.2); } 100% { opacity: 1; } }
 
-        body.owner-mode #pin2 {
-            background-color: #ef4444; 
-            box-shadow: 0 0 15px #ef4444;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) rotateX(-90deg) scale(1); }
-            50% { transform: translate(-50%, -50%) rotateX(-90deg) scale(1.3); }
-            100% { transform: translate(-50%, -50%) rotateX(-90deg) scale(1); }
-        }
-
-        /* --- UI Pop-up Card --- */
-        .ui-card {
-            position: fixed;
-            bottom: -300px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 350px;
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px 16px 0 0;
-            padding: 24px;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
-            transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.8s;
-            z-index: 1000;
-        }
-
-        .ui-card.active { bottom: 0; }
-        .card-title { margin: 0 0 10px 0; font-size: 20px; }
-        .card-data { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
-        
-        .action-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #38bdf8;
-            color: #0f172a;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        body.owner-mode .action-btn { background: #10b981; }
-        body.owner-mode .action-btn.warning { background: #ef4444; color: white; }
-
-        /* --- Features Section --- */
-        .features-section {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            padding: 60px 40px 100px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex-wrap: wrap;
-        }
-
+        /* Features */
+        .features-section { align-items: flex-start; padding-left: 5%; }
+        .features-grid { display: flex; gap: 30px; max-width: 60%; flex-wrap: wrap; }
         .feature-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 40px 30px;
-            flex: 1;
-            min-width: 280px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px; padding: 40px 30px; flex: 1; min-width: 250px; text-align: left;
+            backdrop-filter: blur(10px); transition: transform 0.3s, border-color 0.3s;
         }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--brand-accent); }
+        .icon { font-size: 32px; margin-bottom: 20px; }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 87, 34, 0.5); 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
+        /* Steps / Timeline */
+        .steps-section { align-items: center; text-align: center; }
+        .timeline { display: flex; justify-content: center; gap: 40px; margin-top: 50px; flex-wrap: wrap; max-width: 1000px;}
+        .step { flex: 1; min-width: 250px; padding: 30px; background: rgba(0,0,0,0.3); border-radius: 16px; border-top: 4px solid var(--brand-accent); }
+        .step-num { font-size: 48px; font-weight: 800; color: rgba(255,255,255,0.1); margin-bottom: 10px; }
 
-        body.owner-mode .feature-card:hover {
-            border-color: rgba(16, 185, 129, 0.5); 
-        }
+        /* CTA Footer */
+        .cta-section { min-height: 50vh; align-items: center; text-align: center; background: linear-gradient(to top, #000, transparent); }
 
-        .icon { font-size: 40px; margin-bottom: 20px; }
-        .feature-card h3 { margin: 0 0 15px 0; font-size: 20px; font-weight: 600; }
-        .feature-card p { color: #94a3b8; line-height: 1.6; margin: 0; font-size: 15px; }
+        /* Helpers */
+        .fade-transition { animation: fadeInOut 0.5s ease-in-out; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        /* Mobile tweaks */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 40px; }
-            .map-section { height: 400px; }
-            header { padding: 15px 20px; flex-direction: column; gap: 10px; }
-            .hero { padding-top: 120px; }
+        /* Hide 3D phone on mobile to keep it clean */
+        @media (max-width: 1024px) {
+            #floating-device { display: none; }
+            .hero, .map-wrapper, .features-grid { max-width: 100%; margin: 0; }
+            .map-section, .features-section { align-items: center; padding: 40px; }
+            .map-grid { width: 100%; height: 400px; }
         }
     </style>
 </head>
@@ -287,7 +217,8 @@
 
     <header>
         <div class="logo">
-            VEND<span class="highlight">SOR</span>
+            <img src="logo.png" alt="" style="height: 32px; object-fit: contain; display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span id="textLogo">VEND<span class="highlight">SOR</span></span>
         </div>
         <div class="toggle-container">
             <span>Find Snacks</span>
@@ -299,172 +230,197 @@
         </div>
     </header>
 
-    <main class="hero">
-        <h1 id="heroTitle">
-            Stop Searching.<br>
-            Start <span class="highlight">Snacking.</span>
-        </h1>
-        <p id="heroSubtitle">
-            Locate the nearest vending machines across Singapore and check real-time inventory before you even start walking.
-        </p>
+    <div id="floating-device" class="state-hero">
+        <div class="device-screen">
+            <div class="screen-ui active" id="ui-hero">
+                <div style="font-size: 60px; color: var(--brand-accent);">⚡</div>
+                <h2 style="margin: 10px 0;">Vendsor</h2>
+                <p style="color: #94a3b8; font-size: 14px;">Initializing Network...</p>
+            </div>
+            <div class="screen-ui" id="ui-map">
+                <div style="width: 100%; height: 200px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid var(--brand-accent); position: relative;">
+                    <div style="position:absolute; top:50%; left:50%; width:10px; height:10px; background: var(--brand-accent); border-radius:50%; box-shadow: 0 0 10px var(--brand-accent);"></div>
+                </div>
+                <h3 style="margin-top:20px;" id="phoneMapTitle">Scanning Area</h3>
+            </div>
+            <div class="screen-ui" id="ui-features">
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px;"></div>
+                    <div style="height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px;"></div>
+                    <div style="height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px;"></div>
+                </div>
+                <h3 style="margin-top:20px;" id="phoneFeatTitle">Live Inventory</h3>
+            </div>
+            <div class="screen-ui" id="ui-steps">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--brand-accent); display:flex; align-items:center; justify-content:center; font-size: 40px; margin: 0 auto;">✓</div>
+                <h3 style="margin-top:20px;" id="phoneStepTitle">Target Acquired</h3>
+            </div>
+        </div>
+    </div>
+
+    <main id="section-hero" class="section hero">
+        <h1 id="heroTitle">Stop Searching.<br>Start <span class="highlight">Snacking.</span></h1>
+        <p id="heroSubtitle">Locate the nearest vending machines across campus and the city. Check real-time inventory before you even start walking.</p>
         <button id="primaryCtaBtn" class="primary-btn">Download the App</button>
     </main>
 
-    <section class="map-section">
-        <div class="map-grid">
-            <div class="pin" id="pin1" onclick="openCard('pin1')"></div>
-            <div class="pin" id="pin2" onclick="openCard('pin2')"></div>
-            <div class="pin" id="pin3" onclick="openCard('pin3')"></div>
+    <section id="section-map" class="section map-section">
+        <div class="map-wrapper">
+            <div class="map-grid">
+                <div class="pin" id="pin1"></div>
+                <div class="pin" id="pin2"></div>
+                <div class="pin" id="pin3"></div>
+            </div>
         </div>
     </section>
 
-    <section class="features-section">
-        <div class="feature-card" id="cardOne">
-            <div class="icon" id="iconOne">📍</div>
-            <h3 id="titleOne">Never Walk Aimlessly</h3>
-            <p id="descOne">Instantly locate the closest vending machines around campus or the city with our real-time interactive map.</p>
-        </div>
-        <div class="feature-card" id="cardTwo">
-            <div class="icon" id="iconTwo">🍫</div>
-            <h3 id="titleTwo">Know Before You Go</h3>
-            <p id="descTwo">Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out.</p>
-        </div>
-        <div class="feature-card" id="cardThree">
-            <div class="icon" id="iconThree">🗳️</div>
-            <h3 id="titleThree">Request Your Favorites</h3>
-            <p id="descThree">Can't find what you are craving? Upvote snacks in the app, and we'll tell operators to stock them near you.</p>
+    <section id="section-features" class="section features-section">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon" id="iconOne">📍</div>
+                <h3 id="titleOne">Never Walk Aimlessly</h3>
+                <p id="descOne">Instantly locate the closest vending machines around campus with our real-time interactive map.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon" id="iconTwo">🍫</div>
+                <h3 id="titleTwo">Know Before You Go</h3>
+                <p id="descTwo">Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon" id="iconThree">🗳️</div>
+                <h3 id="titleThree">Request Favorites</h3>
+                <p id="descThree">Can't find what you are craving? Upvote snacks in the app, and we'll tell operators to stock them near you.</p>
+            </div>
         </div>
     </section>
 
-    <div class="ui-card" id="infoCard">
-        <h3 class="card-title" id="cardTitle">Vending Machine #104</h3>
-        <p class="card-data" id="cardData">Distance: 120m • Fully Stocked</p>
-        <button class="action-btn" id="cardAction">Navigate Here</button>
-    </div>
+    <section id="section-steps" class="section steps-section">
+        <h2 style="font-size: 40px; margin:0;" id="stepsMainTitle">How It Works</h2>
+        <div class="timeline">
+            <div class="step">
+                <div class="step-num">01</div>
+                <h3 id="step1Title">Open the Radar</h3>
+                <p id="step1Desc">Launch the app to immediately see all connected machines within walking distance.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <h3 id="step2Title">Verify Stock</h3>
+                <p id="step2Desc">Tap a machine to peek inside. Make sure your preferred item is fully stocked.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <h3 id="step3Title">Secure the Goods</h3>
+                <p id="step3Desc">Follow the integrated routing to the machine and enjoy.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section cta-section">
+        <h2 style="font-size: 48px; margin-bottom: 20px;" id="ctaTitle">Ready to upgrade your routine?</h2>
+        <button id="footerCtaBtn" class="primary-btn">Join the Waitlist</button>
+    </section>
 
     <script>
         // State variables
         let isUserMode = true;
 
-        // DOM Elements - Toggle
-        const toggle = document.getElementById('modeToggle');
-        const body = document.body;
-        
-        // DOM Elements - Hero
-        const heroTitle = document.getElementById('heroTitle');
-        const heroSubtitle = document.getElementById('heroSubtitle');
-        const primaryCtaBtn = document.getElementById('primaryCtaBtn');
-        
-        // DOM Elements - Map Card
-        const infoCard = document.getElementById('infoCard');
-        const cardTitle = document.getElementById('cardTitle');
-        const cardData = document.getElementById('cardData');
-        const cardAction = document.getElementById('cardAction');
-
-        // DOM Elements - Feature Cards
-        const titleOne = document.getElementById('titleOne');
-        const descOne = document.getElementById('descOne');
-        const iconOne = document.getElementById('iconOne');
-        const titleTwo = document.getElementById('titleTwo');
-        const descTwo = document.getElementById('descTwo');
-        const iconTwo = document.getElementById('iconTwo');
-        const titleThree = document.getElementById('titleThree');
-        const descThree = document.getElementById('descThree');
-        const iconThree = document.getElementById('iconThree');
-
-        // Content Dictionary
+        // Content Dictionary (User vs Operator modes)
         const content = {
             user: {
-                titleHTML: 'Stop Searching.<br>Start <span class="highlight">Snacking.</span>',
-                subtitle: "Locate the nearest vending machines across Singapore and check real-time inventory before you even start walking.",
+                heroTitle: 'Stop Searching.<br>Start <span class="highlight">Snacking.</span>',
+                heroSub: "Locate the nearest vending machines across campus and the city. Check real-time inventory before you even start walking.",
                 ctaText: "Download the App",
-                f1Icon: "📍", f1Title: "Never Walk Aimlessly", f1Desc: "Instantly locate the closest vending machines around campus or the city with our real-time interactive map.",
-                f2Icon: "🍫", f2Title: "Know Before You Go", f2Desc: "Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out.",
-                f3Icon: "🗳️", f3Title: "Request Your Favorites", f3Desc: "Can't find what you are craving? Upvote snacks in the app, and we'll tell operators to stock them near you."
+                f1: ["📍", "Never Walk Aimlessly", "Instantly locate the closest vending machines around campus with our real-time interactive map."],
+                f2: ["🍫", "Know Before You Go", "Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out."],
+                f3: ["🗳️", "Request Favorites", "Can't find what you are craving? Upvote snacks in the app, and we'll tell operators to stock them near you."],
+                stepsMain: "How It Works",
+                s1: ["Open the Radar", "Launch the app to immediately see all connected machines within walking distance."],
+                s2: ["Verify Stock", "Tap a machine to peek inside. Make sure your preferred item is fully stocked."],
+                s3: ["Secure the Goods", "Follow the integrated routing to the machine and enjoy."],
+                ctaFinal: "Ready to upgrade your routine?",
+                phoneUI: ["Scanning Area", "Live Inventory", "Target Acquired"]
             },
             operator: {
-                titleHTML: 'Stop Guessing.<br>Start <span class="highlight">Placing.</span>',
-                subtitle: "Vendsor provides real-time search intent data and local foot-traffic heatmaps for Singapore's top vending machine operators.",
+                heroTitle: 'Stop Guessing.<br>Start <span class="highlight">Placing.</span>',
+                heroSub: "Vendsor provides real-time search intent data and local foot-traffic heatmaps for Singapore's top vending machine operators.",
                 ctaText: "Request Early Access",
-                f1Icon: "🔥", f1Title: "Foot Traffic Heatmaps", f1Desc: "Stop guessing where to put your next machine. Use our foot-traffic data to identify highly profitable, underserved locations.",
-                f2Icon: "📊", f2Title: "Search Intent Data", f2Desc: "See exactly what people in a 1km radius are searching for. Stock what they actually want and maximize your margins.",
-                f3Icon: "⚡", f3Title: "Live Fleet Routing", f3Desc: "Monitor inventory across your whole fleet. Get alerted when stock is low so you only dispatch restock crews when necessary."
+                f1: ["🔥", "Traffic Heatmaps", "Stop guessing. Use our foot-traffic data to identify highly profitable, underserved locations."],
+                f2: ["📊", "Search Intent Data", "See exactly what people in a 1km radius are searching for. Stock what they actually want."],
+                f3: ["⚡", "Live Fleet Routing", "Monitor inventory across your whole fleet. Get alerted when stock is low."],
+                stepsMain: "Optimize Your Fleet",
+                s1: ["Connect Machines", "Integrate your existing telemetry systems with the Vendsor operator dashboard."],
+                s2: ["Analyze Demand", "Watch real-time data flow in as users search for snacks in your territory."],
+                s3: ["Dispatch Efficiently", "Only send restock crews to machines that actually need it, saving time and fuel."],
+                ctaFinal: "Maximize your margins today.",
+                phoneUI: ["Fleet Overview", "Revenue Analytics", "Restock Routed"]
             }
         };
 
-        // Handle the Flip between User and Owner mode
+        // Handle the Toggle Switch
+        const toggle = document.getElementById('modeToggle');
         toggle.addEventListener('change', () => {
             isUserMode = !toggle.checked;
-            const currentMode = isUserMode ? content.user : content.operator;
+            const data = isUserMode ? content.user : content.operator;
             
-            // Toggle body class for CSS variables (colors and 3D angle)
-            if(!isUserMode) {
-                body.classList.add('owner-mode');
-            } else {
-                body.classList.remove('owner-mode');
-            }
+            document.body.classList.toggle('owner-mode', !isUserMode);
             
-            infoCard.classList.remove('active'); // Hide card on swap
-
-            // Gather elements to animate
-            const elementsToAnimate = [heroTitle, heroSubtitle, primaryCtaBtn, titleOne, descOne, iconOne, titleTwo, descTwo, iconTwo, titleThree, descThree, iconThree];
-            
-            // Trigger reflow for CSS animation restart
-            elementsToAnimate.forEach(el => {
+            // Trigger animation
+            const textElements = document.querySelectorAll('h1, p, h2, h3');
+            textElements.forEach(el => {
                 el.classList.remove('fade-transition');
                 void el.offsetWidth; 
                 el.classList.add('fade-transition');
             });
 
-            // Swap text after a tiny delay to sync with animation
+            // Update Text Data
             setTimeout(() => {
-                heroTitle.innerHTML = currentMode.titleHTML;
-                heroSubtitle.innerText = currentMode.subtitle;
-                primaryCtaBtn.innerText = currentMode.ctaText;
+                document.getElementById('heroTitle').innerHTML = data.heroTitle;
+                document.getElementById('heroSubtitle').innerText = data.heroSub;
+                document.querySelectorAll('.primary-btn').forEach(btn => btn.innerText = data.ctaText);
 
-                iconOne.innerText = currentMode.f1Icon;
-                titleOne.innerText = currentMode.f1Title;
-                descOne.innerText = currentMode.f1Desc;
+                document.getElementById('iconOne').innerText = data.f1[0]; document.getElementById('titleOne').innerText = data.f1[1]; document.getElementById('descOne').innerText = data.f1[2];
+                document.getElementById('iconTwo').innerText = data.f2[0]; document.getElementById('titleTwo').innerText = data.f2[1]; document.getElementById('descTwo').innerText = data.f2[2];
+                document.getElementById('iconThree').innerText = data.f3[0]; document.getElementById('titleThree').innerText = data.f3[1]; document.getElementById('descThree').innerText = data.f3[2];
 
-                iconTwo.innerText = currentMode.f2Icon;
-                titleTwo.innerText = currentMode.f2Title;
-                descTwo.innerText = currentMode.f2Desc;
+                document.getElementById('stepsMainTitle').innerText = data.stepsMain;
+                document.getElementById('step1Title').innerText = data.s1[0]; document.getElementById('step1Desc').innerText = data.s1[1];
+                document.getElementById('step2Title').innerText = data.s2[0]; document.getElementById('step2Desc').innerText = data.s2[1];
+                document.getElementById('step3Title').innerText = data.s3[0]; document.getElementById('step3Desc').innerText = data.s3[1];
+                
+                document.getElementById('ctaTitle').innerText = data.ctaFinal;
 
-                iconThree.innerText = currentMode.f3Icon;
-                titleThree.innerText = currentMode.f3Title;
-                descThree.innerText = currentMode.f3Desc;
+                document.getElementById('phoneMapTitle').innerText = data.phoneUI[0];
+                document.getElementById('phoneFeatTitle').innerText = data.phoneUI[1];
+                document.getElementById('phoneStepTitle').innerText = data.phoneUI[2];
             }, 150);
         });
 
-        // Handle clicking on map pins
-        function openCard(pinId) {
-            infoCard.classList.add('active');
+        // --- Scroll Tracking for the Floating Device (Stringtune effect) ---
+        const floatingDevice = document.getElementById('floating-device');
+        const uiScreens = document.querySelectorAll('.screen-ui');
+        
+        // Setup Intersection Observer to detect which section is on screen
+        const observerOptions = { root: null, rootMargin: '-30% 0px -40% 0px', threshold: 0 };
 
-            if (isUserMode) {
-                cardTitle.innerText = "Snack Station";
-                cardData.innerText = "120m away • Cold drinks available";
-                cardAction.innerText = "Navigate to Machine";
-                cardAction.className = "action-btn"; 
-            } else {
-                if (pinId === 'pin2') {
-                    cardTitle.innerText = "Machine #089 (UTown)";
-                    cardData.innerText = "CRITICAL: Out of Cola. Est Revenue Loss: $15/hr";
-                    cardAction.innerText = "Dispatch Restock Crew";
-                    cardAction.className = "action-btn warning";
-                } else {
-                    cardTitle.innerText = "Machine #104";
-                    cardData.innerText = "Status: Healthy • Inventory: 92% • Revenue: $42 today";
-                    cardAction.innerText = "View Analytics";
-                    cardAction.className = "action-btn";
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // 1. Update the Phone's 3D Position
+                    const sectionId = entry.target.id.split('-')[1]; // gets 'hero', 'map', 'features', or 'steps'
+                    floatingDevice.className = `state-${sectionId}`;
+
+                    // 2. Update the UI inside the phone screen
+                    uiScreens.forEach(screen => screen.classList.remove('active'));
+                    const activeUI = document.getElementById(`ui-${sectionId}`);
+                    if(activeUI) activeUI.classList.add('active');
                 }
-            }
-        }
+            });
+        }, observerOptions);
 
-        // Close UI card if clicking anywhere outside the pins
-        document.querySelector('.map-section').addEventListener('click', (e) => {
-            if(e.target.classList.contains('map-section') || e.target.classList.contains('map-grid')) {
-                infoCard.classList.remove('active');
-            }
+        // Observe the main sections
+        ['section-hero', 'section-map', 'section-features', 'section-steps'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
         });
     </script>
 </body>
