@@ -13,18 +13,18 @@
             --pin-glow: 0 0 15px #38bdf8;
             --text-color: #f8fafc;
             --card-bg: rgba(15, 23, 42, 0.85);
-            --view-angle: rotateX(60deg) rotateZ(-45deg) scale(1);
+            --view-angle: rotateX(60deg) rotateZ(-45deg) scale(0.9);
+            --brand-orange: #ff5722;
         }
 
         body.owner-mode {
             /* Owner Mode Colors */
             --bg-color: #1e1b4b;
             --grid-color: rgba(167, 139, 250, 0.2);
-            --pin-color: #10b981; /* Healthy machine */
+            --pin-color: #10b981; 
             --pin-glow: 0 0 15px #10b981;
             --card-bg: rgba(30, 27, 75, 0.85);
-            /* Swoop the camera out slightly for management view */
-            --view-angle: rotateX(55deg) rotateZ(-30deg) scale(0.85); 
+            --view-angle: rotateX(55deg) rotateZ(-30deg) scale(0.75); 
         }
 
         body {
@@ -33,11 +33,11 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
             transition: background-color 0.8s ease;
         }
 
-        /* Navbar & Controls */
+        /* --- Header & Navigation --- */
         header {
             position: fixed;
             top: 0;
@@ -55,12 +55,13 @@
 
         .logo {
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 800;
             letter-spacing: 1px;
-            /* Replace text with <img src="logo.png" height="40"> later */
+            color: white;
         }
 
-        /* The Toggle Switch */
+        .highlight { color: var(--brand-orange); }
+
         .toggle-container {
             display: flex;
             align-items: center;
@@ -75,11 +76,7 @@
             height: 34px;
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
             position: absolute;
@@ -106,18 +103,60 @@
         input:checked + .slider { background-color: #6366f1; }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* The 3D Simulation Canvas */
-        .scene {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
-            transform: translate(-50%, -50%);
-            perspective: 1000px;
+        /* --- Hero Section --- */
+        .hero {
+            padding: 150px 20px 50px 20px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            margin: 0 0 20px 0;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #94a3b8;
+            margin: 0 0 40px 0;
+            line-height: 1.6;
+        }
+
+        .primary-btn {
+            background: var(--brand-orange);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+        }
+
+        .fade-transition { animation: fadeInOut 0.5s ease-in-out; }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(5px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 3D Map Section --- */
+        .map-section {
+            position: relative;
+            width: 100%;
+            height: 600px;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .map-grid {
@@ -134,7 +173,6 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.5) inset;
         }
 
-        /* Vending Machine Pins */
         .pin {
             position: absolute;
             width: 20px;
@@ -142,19 +180,17 @@
             background-color: var(--pin-color);
             border-radius: 50%;
             box-shadow: var(--pin-glow);
-            transform: translate(-50%, -50%) rotateX(-90deg); /* Stand up from grid */
+            transform: translate(-50%, -50%) rotateX(-90deg); 
             transition: all 0.5s ease;
             cursor: pointer;
         }
 
-        /* Pin Placements */
         #pin1 { top: 30%; left: 40%; }
         #pin2 { top: 70%; left: 60%; }
         #pin3 { top: 50%; left: 20%; }
 
-        /* Owner Mode specific pin overrides */
         body.owner-mode #pin2 {
-            background-color: #ef4444; /* Red warning */
+            background-color: #ef4444; 
             box-shadow: 0 0 15px #ef4444;
             animation: pulse 1.5s infinite;
         }
@@ -165,10 +201,10 @@
             100% { transform: translate(-50%, -50%) rotateX(-90deg) scale(1); }
         }
 
-        /* Glassmorphism UI Card */
+        /* --- UI Pop-up Card --- */
         .ui-card {
             position: fixed;
-            bottom: -300px; /* Hidden initially */
+            bottom: -300px; 
             left: 50%;
             transform: translateX(-50%);
             width: 350px;
@@ -179,13 +215,10 @@
             padding: 24px;
             box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
             transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.8s;
-            z-index: 10;
+            z-index: 1000;
         }
 
-        .ui-card.active {
-            bottom: 0;
-        }
-
+        .ui-card.active { bottom: 0; }
         .card-title { margin: 0 0 10px 0; font-size: 20px; }
         .card-data { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
         
@@ -204,12 +237,58 @@
         body.owner-mode .action-btn { background: #10b981; }
         body.owner-mode .action-btn.warning { background: #ef4444; color: white; }
 
+        /* --- Features Section --- */
+        .features-section {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 60px 40px 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 40px 30px;
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 87, 34, 0.5); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.owner-mode .feature-card:hover {
+            border-color: rgba(16, 185, 129, 0.5); 
+        }
+
+        .icon { font-size: 40px; margin-bottom: 20px; }
+        .feature-card h3 { margin: 0 0 15px 0; font-size: 20px; font-weight: 600; }
+        .feature-card p { color: #94a3b8; line-height: 1.6; margin: 0; font-size: 15px; }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .map-section { height: 400px; }
+            header { padding: 15px 20px; flex-direction: column; gap: 10px; }
+            .hero { padding-top: 120px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">VENSOR</div>
+        <div class="logo">
+            VEND<span class="highlight">SOR</span>
+        </div>
         <div class="toggle-container">
             <span>Find Snacks</span>
             <label class="switch">
@@ -220,13 +299,42 @@
         </div>
     </header>
 
-    <div class="scene">
+    <main class="hero">
+        <h1 id="heroTitle">
+            Stop Searching.<br>
+            Start <span class="highlight">Snacking.</span>
+        </h1>
+        <p id="heroSubtitle">
+            Locate the nearest vending machines across Singapore and check real-time inventory before you even start walking.
+        </p>
+        <button id="primaryCtaBtn" class="primary-btn">Download the App</button>
+    </main>
+
+    <section class="map-section">
         <div class="map-grid">
             <div class="pin" id="pin1" onclick="openCard('pin1')"></div>
             <div class="pin" id="pin2" onclick="openCard('pin2')"></div>
             <div class="pin" id="pin3" onclick="openCard('pin3')"></div>
         </div>
-    </div>
+    </section>
+
+    <section class="features-section">
+        <div class="feature-card" id="cardOne">
+            <div class="icon" id="iconOne">📍</div>
+            <h3 id="titleOne">Never Walk Aimlessly</h3>
+            <p id="descOne">Instantly locate the closest vending machines around campus or the city with our real-time interactive map.</p>
+        </div>
+        <div class="feature-card" id="cardTwo">
+            <div class="icon" id="iconTwo">🍫</div>
+            <h3 id="titleTwo">Know Before You Go</h3>
+            <p id="descTwo">Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out.</p>
+        </div>
+        <div class="feature-card" id="cardThree">
+            <div class="icon" id="iconThree">🗳️</div>
+            <h3 id="titleThree">Request Your Favorites</h3>
+            <p id="descThree">Can't find what you are craving? Upvote snacks in the app, and we'll tell operators to stock them near you.</p>
+        </div>
+    </section>
 
     <div class="ui-card" id="infoCard">
         <h3 class="card-title" id="cardTitle">Vending Machine #104</h3>
@@ -235,37 +343,109 @@
     </div>
 
     <script>
+        // State variables
+        let isUserMode = true;
+
+        // DOM Elements - Toggle
         const toggle = document.getElementById('modeToggle');
         const body = document.body;
+        
+        // DOM Elements - Hero
+        const heroTitle = document.getElementById('heroTitle');
+        const heroSubtitle = document.getElementById('heroSubtitle');
+        const primaryCtaBtn = document.getElementById('primaryCtaBtn');
+        
+        // DOM Elements - Map Card
         const infoCard = document.getElementById('infoCard');
         const cardTitle = document.getElementById('cardTitle');
         const cardData = document.getElementById('cardData');
         const cardAction = document.getElementById('cardAction');
 
+        // DOM Elements - Feature Cards
+        const titleOne = document.getElementById('titleOne');
+        const descOne = document.getElementById('descOne');
+        const iconOne = document.getElementById('iconOne');
+        const titleTwo = document.getElementById('titleTwo');
+        const descTwo = document.getElementById('descTwo');
+        const iconTwo = document.getElementById('iconTwo');
+        const titleThree = document.getElementById('titleThree');
+        const descThree = document.getElementById('descThree');
+        const iconThree = document.getElementById('iconThree');
+
+        // Content Dictionary
+        const content = {
+            user: {
+                titleHTML: 'Stop Searching.<br>Start <span class="highlight">Snacking.</span>',
+                subtitle: "Locate the nearest vending machines across Singapore and check real-time inventory before you even start walking.",
+                ctaText: "Download the App",
+                f1Icon: "📍", f1Title: "Never Walk Aimlessly", f1Desc: "Instantly locate the closest vending machines around campus or the city with our real-time interactive map.",
+                f2Icon: "🍫", f2Title: "Know Before You Go", f2Desc: "Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out.",
+                f3Icon: "🗳️", f3Title: "Request Your Favorites", f3Desc: "Can't find what you are craving? Upvote snacks in the app, and we'll tell operators to stock them near you."
+            },
+            operator: {
+                titleHTML: 'Stop Guessing.<br>Start <span class="highlight">Placing.</span>',
+                subtitle: "Vendsor provides real-time search intent data and local foot-traffic heatmaps for Singapore's top vending machine operators.",
+                ctaText: "Request Early Access",
+                f1Icon: "🔥", f1Title: "Foot Traffic Heatmaps", f1Desc: "Stop guessing where to put your next machine. Use our foot-traffic data to identify highly profitable, underserved locations.",
+                f2Icon: "📊", f2Title: "Search Intent Data", f2Desc: "See exactly what people in a 1km radius are searching for. Stock what they actually want and maximize your margins.",
+                f3Icon: "⚡", f3Title: "Live Fleet Routing", f3Desc: "Monitor inventory across your whole fleet. Get alerted when stock is low so you only dispatch restock crews when necessary."
+            }
+        };
+
         // Handle the Flip between User and Owner mode
         toggle.addEventListener('change', () => {
-            if(toggle.checked) {
+            isUserMode = !toggle.checked;
+            const currentMode = isUserMode ? content.user : content.operator;
+            
+            // Toggle body class for CSS variables (colors and 3D angle)
+            if(!isUserMode) {
                 body.classList.add('owner-mode');
-                infoCard.classList.remove('active'); // hide card on swap
             } else {
                 body.classList.remove('owner-mode');
-                infoCard.classList.remove('active');
             }
+            
+            infoCard.classList.remove('active'); // Hide card on swap
+
+            // Gather elements to animate
+            const elementsToAnimate = [heroTitle, heroSubtitle, primaryCtaBtn, titleOne, descOne, iconOne, titleTwo, descTwo, iconTwo, titleThree, descThree, iconThree];
+            
+            // Trigger reflow for CSS animation restart
+            elementsToAnimate.forEach(el => {
+                el.classList.remove('fade-transition');
+                void el.offsetWidth; 
+                el.classList.add('fade-transition');
+            });
+
+            // Swap text after a tiny delay to sync with animation
+            setTimeout(() => {
+                heroTitle.innerHTML = currentMode.titleHTML;
+                heroSubtitle.innerText = currentMode.subtitle;
+                primaryCtaBtn.innerText = currentMode.ctaText;
+
+                iconOne.innerText = currentMode.f1Icon;
+                titleOne.innerText = currentMode.f1Title;
+                descOne.innerText = currentMode.f1Desc;
+
+                iconTwo.innerText = currentMode.f2Icon;
+                titleTwo.innerText = currentMode.f2Title;
+                descTwo.innerText = currentMode.f2Desc;
+
+                iconThree.innerText = currentMode.f3Icon;
+                titleThree.innerText = currentMode.f3Title;
+                descThree.innerText = currentMode.f3Desc;
+            }, 150);
         });
 
-        // Handle clicking on machines
+        // Handle clicking on map pins
         function openCard(pinId) {
             infoCard.classList.add('active');
-            const isOwner = toggle.checked;
 
-            if (!isOwner) {
-                // User Perspective
+            if (isUserMode) {
                 cardTitle.innerText = "Snack Station";
                 cardData.innerText = "120m away • Cold drinks available";
                 cardAction.innerText = "Navigate to Machine";
                 cardAction.className = "action-btn"; 
             } else {
-                // Owner Perspective
                 if (pinId === 'pin2') {
                     cardTitle.innerText = "Machine #089 (UTown)";
                     cardData.innerText = "CRITICAL: Out of Cola. Est Revenue Loss: $15/hr";
@@ -280,9 +460,9 @@
             }
         }
 
-        // Close card if clicking background
-        document.querySelector('.scene').addEventListener('click', (e) => {
-            if(e.target.classList.contains('scene')) {
+        // Close UI card if clicking anywhere outside the pins
+        document.querySelector('.map-section').addEventListener('click', (e) => {
+            if(e.target.classList.contains('map-section') || e.target.classList.contains('map-grid')) {
                 infoCard.classList.remove('active');
             }
         });
