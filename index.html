@@ -6,28 +6,28 @@
     <title>Vendsor | The Vending Network</title>
     <style>
         :root {
-            /* User Mode Colors */
-            --bg-color: #0f172a;
-            --grid-color: rgba(56, 189, 248, 0.2);
-            --pin-color: #38bdf8;
-            --pin-glow: 0 0 15px #38bdf8;
+            /* User Mode Colors (Matched to Logo) */
+            --bg-color: #1a1a1a; 
+            --grid-color: rgba(242, 92, 39, 0.15);
+            --pin-color: #f25c27; 
+            --pin-glow: 0 0 15px #f25c27;
             --text-color: #f8fafc;
-            --card-bg: rgba(15, 23, 42, 0.85);
+            --card-bg: rgba(26, 26, 26, 0.85);
             --view-angle: rotateX(60deg) rotateZ(-45deg) scale(0.9);
-            --brand-accent: #ff5722; /* Orange */
-            --phone-bg: linear-gradient(135deg, #1e293b, #0f172a);
+            --brand-accent: #f25c27; 
+            --phone-bg: linear-gradient(135deg, #2a2a2a, #1a1a1a);
         }
 
         body.owner-mode {
-            /* Owner Mode Colors */
-            --bg-color: #1e1b4b;
-            --grid-color: rgba(167, 139, 250, 0.2);
-            --pin-color: #10b981; 
-            --pin-glow: 0 0 15px #10b981;
-            --card-bg: rgba(30, 27, 75, 0.85);
+            /* Operator Mode Colors (Analytical/Data focused) */
+            --bg-color: #0f172a; 
+            --grid-color: rgba(56, 189, 248, 0.2);
+            --pin-color: #06b6d4; 
+            --pin-glow: 0 0 15px #06b6d4;
+            --card-bg: rgba(15, 23, 42, 0.85);
             --view-angle: rotateX(55deg) rotateZ(-30deg) scale(0.75); 
-            --brand-accent: #10b981; /* Emerald */
-            --phone-bg: linear-gradient(135deg, #2e1065, #1e1b4b);
+            --brand-accent: #0ea5e9; 
+            --phone-bg: linear-gradient(135deg, #1e293b, #0f172a);
         }
 
         body {
@@ -144,7 +144,7 @@
         }
         .primary-btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
 
-        /* 3D Map (Upgraded) */
+        /* 3D Map */
         .map-section { align-items: flex-end; padding-right: 10%; }
         .map-wrapper { width: 60%; display: flex; justify-content: flex-end; }
         
@@ -217,8 +217,7 @@
 
     <header>
         <div class="logo">
-            <img src="logo.png" alt="" style="height: 32px; object-fit: contain; display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <span id="textLogo">VEND<span class="highlight">SOR</span></span>
+            <img src="Vendsor Logo Dark with Text Charcoal Vertical.png" alt="Vendsor" style="height: 48px; object-fit: contain;">
         </div>
         <div class="toggle-container">
             <span>Find Snacks</span>
@@ -260,7 +259,7 @@
 
     <main id="section-hero" class="section hero">
         <h1 id="heroTitle">Stop Searching.<br>Start <span class="highlight">Snacking.</span></h1>
-        <p id="heroSubtitle">Locate the nearest vending machines across campus and the city. Check real-time inventory before you even start walking.</p>
+        <p id="heroSubtitle">Locate the nearest vending machines across the city. Check real-time inventory before you even start walking.</p>
         <button id="primaryCtaBtn" class="primary-btn">Download the App</button>
     </main>
 
@@ -328,7 +327,7 @@
         const content = {
             user: {
                 heroTitle: 'Stop Searching.<br>Start <span class="highlight">Snacking.</span>',
-                heroSub: "Locate the nearest vending machines across campus and the city. Check real-time inventory before you even start walking.",
+                heroSub: "Locate the nearest vending machines across the city. Check real-time inventory before you even start walking.",
                 ctaText: "Download the App",
                 f1: ["📍", "Never Walk Aimlessly", "Instantly locate the closest vending machines around campus with our real-time interactive map."],
                 f2: ["🍫", "Know Before You Go", "Check live inventory. Don't waste a trip just to find out your favorite drink or snack is sold out."],
@@ -341,8 +340,8 @@
                 phoneUI: ["Scanning Area", "Live Inventory", "Target Acquired"]
             },
             operator: {
-                heroTitle: 'Stop Guessing.<br>Start <span class="highlight">Placing.</span>',
-                heroSub: "Vendsor provides real-time search intent data and local foot-traffic heatmaps for Singapore's top vending machine operators.",
+                heroTitle: 'Smart Data for<br><span class="highlight">Smart Vending.</span>',
+                heroSub: "Vendsor provides real-time search intent data and local foot-traffic heatmaps to optimize your entire fleet.",
                 ctaText: "Request Early Access",
                 f1: ["🔥", "Traffic Heatmaps", "Stop guessing. Use our foot-traffic data to identify highly profitable, underserved locations."],
                 f2: ["📊", "Search Intent Data", "See exactly what people in a 1km radius are searching for. Stock what they actually want."],
